@@ -673,14 +673,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize publication year sections on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Set proper max-height for initially active year
-    const activeSection = document.querySelector('.year-section.active');
-    if (activeSection) {
+    // Set proper max-height for initially active year sections
+    document.querySelectorAll('.year-section.active').forEach(function(activeSection) {
         const activeContent = activeSection.querySelector('.year-content');
         if (activeContent) {
             activeContent.style.maxHeight = activeContent.scrollHeight + 'px';
         }
-    }
+    });
 });
 
 // Publication year toggle function - only one year active at a time
@@ -747,6 +746,48 @@ function toggleYear(year) {
                 behavior: 'smooth'
             });
         }, 100); // Small delay to allow content to start expanding
+    }
+}
+
+function toggleResearchCategory(category) {
+    const container = document.querySelector('.publications-timeline');
+    if (!container) return;
+    const allSections = container.querySelectorAll('.year-section');
+    const selectedSection = document.getElementById('research-cat-' + category);
+    if (!selectedSection) return;
+    const selectedContent = selectedSection.querySelector('.year-content');
+    const selectedIcon = selectedSection.querySelector('.year-icon');
+    const isActive = selectedSection.classList.contains('active');
+
+    if (isActive) {
+        selectedSection.classList.remove('active');
+        selectedContent.style.maxHeight = '0';
+        selectedIcon.style.transform = 'rotate(-90deg)';
+    } else {
+        allSections.forEach(function(section) {
+            section.classList.remove('active');
+            var content = section.querySelector('.year-content');
+            var icon = section.querySelector('.year-icon');
+            if (content) content.style.maxHeight = '0';
+            if (icon) icon.style.transform = 'rotate(-90deg)';
+        });
+        selectedSection.classList.add('active');
+        selectedContent.style.maxHeight = selectedContent.scrollHeight + 'px';
+        selectedIcon.style.transform = 'rotate(0deg)';
+
+        setTimeout(function() {
+            var navbar = document.getElementById('navbar');
+            var navbarHeight = navbar ? navbar.offsetHeight : 80;
+            var yearTitle = selectedSection.querySelector('.year-title');
+            var elementTop = 0;
+            var element = yearTitle;
+            while (element) {
+                elementTop += element.offsetTop;
+                element = element.offsetParent;
+            }
+            var offsetPosition = elementTop - navbarHeight - 40;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }, 100);
     }
 }
 
