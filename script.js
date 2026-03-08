@@ -671,15 +671,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Initialize publication year sections on page load
+// Initialize publication year sections on page load (publications page only)
 document.addEventListener('DOMContentLoaded', function() {
-    // Set proper max-height for initially active year sections
-    document.querySelectorAll('.year-section.active').forEach(function(activeSection) {
-        const activeContent = activeSection.querySelector('.year-content');
-        if (activeContent) {
-            activeContent.style.maxHeight = activeContent.scrollHeight + 'px';
+    var pubTimeline = document.querySelector('.publications > .container > .publications-timeline');
+    if (pubTimeline) {
+        var activeSection = pubTimeline.querySelector('.year-section.active');
+        if (activeSection) {
+            var activeContent = activeSection.querySelector('.year-content');
+            if (activeContent) {
+                activeContent.style.maxHeight = activeContent.scrollHeight + 'px';
+            }
         }
-    });
+    }
 });
 
 // Publication year toggle function - only one year active at a time
@@ -750,31 +753,19 @@ function toggleYear(year) {
 }
 
 function toggleResearchCategory(category) {
-    const container = document.querySelector('.publications-timeline');
-    if (!container) return;
-    const allSections = container.querySelectorAll('.year-section');
-    const selectedSection = document.getElementById('research-cat-' + category);
+    var selectedSection = document.getElementById('research-cat-' + category);
     if (!selectedSection) return;
-    const selectedContent = selectedSection.querySelector('.year-content');
-    const selectedIcon = selectedSection.querySelector('.year-icon');
-    const isActive = selectedSection.classList.contains('active');
+    var panel = selectedSection.closest('.research-panel');
+    if (!panel) return;
+    var allSections = panel.querySelectorAll('.year-section');
+    var isActive = selectedSection.classList.contains('active');
 
-    if (isActive) {
-        selectedSection.classList.remove('active');
-        selectedContent.style.maxHeight = '0';
-        selectedIcon.style.transform = 'rotate(-90deg)';
-    } else {
-        allSections.forEach(function(section) {
-            section.classList.remove('active');
-            var content = section.querySelector('.year-content');
-            var icon = section.querySelector('.year-icon');
-            if (content) content.style.maxHeight = '0';
-            if (icon) icon.style.transform = 'rotate(-90deg)';
-        });
+    allSections.forEach(function(section) {
+        section.classList.remove('active');
+    });
+
+    if (!isActive) {
         selectedSection.classList.add('active');
-        selectedContent.style.maxHeight = selectedContent.scrollHeight + 'px';
-        selectedIcon.style.transform = 'rotate(0deg)';
-
         setTimeout(function() {
             var navbar = document.getElementById('navbar');
             var navbarHeight = navbar ? navbar.offsetHeight : 80;
